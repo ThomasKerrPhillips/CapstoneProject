@@ -101,15 +101,17 @@ def get_pie_chart(entered_site):
 @app.callback(Output(component_id='success-payload-scatter-chart', component_property='figure'),
                 [Input(component_id='site-dropdown', component_property='value'),
                 Input(component_id="payload-slider", component_property="value")])
-def get_scatter_plot(entered_site):  
-    CCAFS_SLC_bool = spacex_df['Launch Site']=='CCAFS SLC-40'
-    CCAFS_SLC = spacex_df[CCAFS_SLC_bool]
-    CCAFS_LC_bool = spacex_df['Launch Site']=='CCAFS LC-40'
-    CCAFS_LC = spacex_df[CCAFS_LC_bool]
-    KSC_bool = spacex_df['Launch Site']=='KSC LC-39A'
-    KSC = spacex_df[KSC_bool]
-    VAFB_bool = spacex_df['Launch Site']=='VAFB SLC-4E'
-    VAFB = spacex_df[VAFB_bool]
+def get_scatter_plot(entered_site,slider):
+    spacex_dfs=spacex_df.sort_values('Payload Mass (kg)')
+    spacex_dfs=spacex_dfs.loc[spacex_dfs['Payload Mass (kg)'] >= min(slider)].loc[spacex_dfs['Payload Mass (kg)'] <= max(slider)]  
+    CCAFS_SLC_bool = spacex_dfs['Launch Site']=='CCAFS SLC-40'
+    CCAFS_SLC = spacex_dfs[CCAFS_SLC_bool]
+    CCAFS_LC_bool = spacex_dfs['Launch Site']=='CCAFS LC-40'
+    CCAFS_LC = spacex_dfs[CCAFS_LC_bool]
+    KSC_bool = spacex_dfs['Launch Site']=='KSC LC-39A'
+    KSC = spacex_dfs[KSC_bool]
+    VAFB_bool = spacex_dfs['Launch Site']=='VAFB SLC-4E'
+    VAFB = spacex_dfs[VAFB_bool]
 
     if entered_site == 'ALL':
         fig = px.scatter(spacex_df,
@@ -124,7 +126,7 @@ def get_scatter_plot(entered_site):
         title='Pay Load Mass vs Sucess')
         return fig
     elif entered_site == 'CCAFS SLC-40':
-        ffig = px.scatter(CCAFS_LC,
+        fig = px.scatter(CCAFS_LC,
         x='Payload Mass (kg)',
         y='class', color='Booster Version',
         title='Pay Load Mass vs Sucess')
